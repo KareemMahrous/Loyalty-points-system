@@ -24,7 +24,7 @@ Use your local PostgreSQL user in `.env`:
 PORT=3000
 NODE_ENV=development
 DB_CLIENT=postgres
-DATABASE_URL=postgresql://mahrous@localhost:5432/club1911
+DATABASE_URL=postgresql://user@localhost:5432/club1911
 JWT_SECRET=club1911-dev-secret
 OTP_EXPIRY_MINUTES=5
 ```
