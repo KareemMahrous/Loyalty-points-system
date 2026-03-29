@@ -43,7 +43,7 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/CustomerSuccessResponse'
+ *               $ref: '#/components/schemas/CreateCustomerSuccessResponse'
  *       422:
  *         description: Invalid input
  *         content:

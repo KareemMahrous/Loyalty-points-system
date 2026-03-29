@@ -7,6 +7,7 @@ export async function authenticateBearer(req, res, next) {
   if (!authorizationHeader.startsWith("Bearer ")) {
     return res.status(401).json(
       errorResponse({
+        message: "Authentication failed.",
         error: "Authorization bearer token is required."
       })
     );
@@ -21,6 +22,7 @@ export async function authenticateBearer(req, res, next) {
   } catch (_error) {
     return res.status(401).json(
       errorResponse({
+        message: "Authentication failed.",
         error: "Invalid or expired token."
       })
     );

@@ -7,10 +7,13 @@ import {
 
 export async function createCustomerController(req, res) {
   try {
-    const customer = await container.createCustomerUseCase.execute(req.body);
+    await container.createCustomerUseCase.execute(req.body);
     return res.status(201).json(
       successResponse({
-        data: customer,
+        message: "User created successfully.",
+        data: {
+          message: "User created successfully."
+        },
       }),
     );
   } catch (error) {
@@ -18,6 +21,7 @@ export async function createCustomerController(req, res) {
 
     return res.status(statusCode).json(
       errorResponse({
+        message: "Customer creation failed.",
         error: error.message,
       }),
     );
@@ -28,6 +32,7 @@ export async function listCustomersController(_req, res) {
   const customers = await container.listCustomersUseCase.execute();
   return res.status(200).json(
     successResponse({
+      message: "Customers fetched successfully.",
       data: customers,
     }),
   );

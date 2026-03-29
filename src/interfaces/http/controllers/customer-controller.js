@@ -6,17 +6,32 @@ import { errorResponse, successResponse } from "../../../shared/http/response-mo
 export async function sendOtpController(req, res) {
   try {
     const data = await container.sendOtpUseCase.execute(req.body);
-    return res.status(200).json(successResponse({ data }));
+    return res.status(200).json(
+      successResponse({
+        message: "OTP sent successfully.",
+        data
+      })
+    );
   } catch (error) {
     const statusCode = error instanceof InvalidInputError ? 422 : 500;
-    return res.status(statusCode).json(errorResponse({ error: error.message }));
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "OTP sending failed.",
+        error: error.message
+      })
+    );
   }
 }
 
 export async function authenticateCustomerController(req, res) {
   try {
     const data = await container.authenticateCustomerUseCase.execute(req.body);
-    return res.status(200).json(successResponse({ data }));
+    return res.status(200).json(
+      successResponse({
+        message: "Authentication successful.",
+        data
+      })
+    );
   } catch (error) {
     let statusCode = 500;
 
@@ -26,7 +41,12 @@ export async function authenticateCustomerController(req, res) {
       statusCode = 401;
     }
 
-    return res.status(statusCode).json(errorResponse({ error: error.message }));
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "Authentication failed.",
+        error: error.message
+      })
+    );
   }
 }
 
@@ -36,9 +56,19 @@ export async function customerProfileController(req, res) {
       actcd: req.auth.actcd
     });
 
-    return res.status(200).json(successResponse({ data }));
+    return res.status(200).json(
+      successResponse({
+        message: "Customer profile fetched successfully.",
+        data
+      })
+    );
   } catch (error) {
     const statusCode = error instanceof AuthenticationError ? 401 : 500;
-    return res.status(statusCode).json(errorResponse({ error: error.message }));
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "Customer profile fetch failed.",
+        error: error.message
+      })
+    );
   }
 }

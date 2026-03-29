@@ -34,12 +34,16 @@ const options = {
               type: "boolean",
               example: true
             },
+            message: {
+              type: "string",
+              example: "Request completed successfully."
+            },
             error: {
               type: "string",
               example: ""
             }
           },
-          required: ["data", "success", "error"]
+          required: ["data", "success", "message", "error"]
         },
         HealthResponseData: {
           type: "object",
@@ -65,12 +69,16 @@ const options = {
               type: "boolean",
               example: false
             },
+            message: {
+              type: "string",
+              example: "Request failed."
+            },
             error: {
               type: "string",
               example: "Invalid input"
             }
           },
-          required: ["data", "success", "error"]
+          required: ["data", "success", "message", "error"]
         },
         CreateCustomerRequest: {
           type: "object",
@@ -172,6 +180,10 @@ const options = {
               type: "boolean",
               example: true
             },
+            message: {
+              type: "string",
+              example: "Health check completed successfully."
+            },
             error: {
               type: "string",
               example: ""
@@ -183,6 +195,7 @@ const options = {
               message: "API is running"
             },
             success: true,
+            message: "Health check completed successfully.",
             error: ""
           }
         },
@@ -195,6 +208,10 @@ const options = {
             success: {
               type: "boolean",
               example: true
+            },
+            message: {
+              type: "string",
+              example: "Customer fetched successfully."
             },
             error: {
               type: "string",
@@ -230,6 +247,44 @@ const options = {
               last_transaction_date: "2025-11-20 00:00:00"
             },
             success: true,
+            message: "Customer fetched successfully.",
+            error: ""
+          }
+        },
+        CreateCustomerResponseData: {
+          type: "object",
+          properties: {
+            message: {
+              type: "string",
+              example: "User created successfully."
+            }
+          }
+        },
+        CreateCustomerSuccessResponse: {
+          type: "object",
+          properties: {
+            data: {
+              $ref: "#/components/schemas/CreateCustomerResponseData"
+            },
+            success: {
+              type: "boolean",
+              example: true
+            },
+            message: {
+              type: "string",
+              example: "User created successfully."
+            },
+            error: {
+              type: "string",
+              example: ""
+            }
+          },
+          example: {
+            data: {
+              message: "User created successfully."
+            },
+            success: true,
+            message: "User created successfully.",
             error: ""
           }
         },
@@ -245,6 +300,10 @@ const options = {
             success: {
               type: "boolean",
               example: true
+            },
+            message: {
+              type: "string",
+              example: "Customers fetched successfully."
             },
             error: {
               type: "string",
@@ -282,6 +341,7 @@ const options = {
               }
             ],
             success: true,
+            message: "Customers fetched successfully.",
             error: ""
           }
         },
@@ -327,6 +387,10 @@ const options = {
               type: "boolean",
               example: true
             },
+            message: {
+              type: "string",
+              example: "OTP sent successfully."
+            },
             error: {
               type: "string",
               example: ""
@@ -339,6 +403,7 @@ const options = {
               mobile: "35467131"
             },
             success: true,
+            message: "OTP sent successfully.",
             error: ""
           }
         },
@@ -400,6 +465,10 @@ const options = {
               type: "boolean",
               example: true
             },
+            message: {
+              type: "string",
+              example: "Authentication successful."
+            },
             error: {
               type: "string",
               example: ""
@@ -419,6 +488,7 @@ const options = {
               }
             },
             success: true,
+            message: "Authentication successful.",
             error: ""
           }
         }

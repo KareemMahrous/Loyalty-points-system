@@ -91,31 +91,7 @@ Example response:
   "success": true,
   "error": "",
   "data": {
-    "actcd": "BH1",
-    "name": "MAHMOUD NADE",
-    "cardname": "MAHMOUD NADE",
-    "mobile": "35467131",
-    "email": "mm@example.com",
-    "dob": null,
-    "gender": null,
-    "countryCode": "BH",
-    "company": "",
-    "tier": {
-      "tier_id": 1,
-      "tier_name": "Starter",
-      "cashback_percent": 10,
-      "range_from": 0,
-      "range_to": 100
-    },
-    "cashback": {
-      "available": "0.000",
-      "total_earned": "0.000"
-    },
-    "spending": {
-      "cyearsale": "0.000",
-      "total_sale": "0.000"
-    },
-    "last_transaction_date": null
+    "message": "User created successfully."
   }
 }
 ```
