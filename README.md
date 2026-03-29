@@ -64,9 +64,9 @@ Allowed payload:
 
 ```json
 {
-  "name": "MAHMOUD NADE",
-  "mobile": "35467131",
-  "countryCode": "BH",
+  "name": "NAME NAME",
+  "mobile": "1234567",
+  "countryCode": "AA",
   "email": "mm@example.com"
 }
 ```
@@ -104,8 +104,8 @@ Request:
 
 ```json
 {
-  "mobile": "35467131",
-  "countryCode": "BH"
+  "mobile": "1234567",
+  "countryCode": "AA"
 }
 ```
 
@@ -118,7 +118,7 @@ Response:
   "data": {
     "message": "OTP sent successfully.",
     "otp_expiry_minutes": 5,
-    "mobile": "35467131"
+    "mobile": "1234567"
   }
 }
 ```
@@ -135,7 +135,7 @@ Request:
 
 ```json
 {
-  "mobile": "35467131",
+  "mobile": "1234567",
   "otp": "000000"
 }
 ```
@@ -152,9 +152,9 @@ Response returns a JWT bearer token:
     "token_type": "Bearer",
     "expires_in": 31536000,
     "customer": {
-      "actcd": "BH1",
-      "name": "MAHMOUD NADE",
-      "mobile": "35467131",
+      "actcd": "AA1",
+      "name": "NAME NAME",
+      "mobile": "1234567",
       "email": "mm@example.com"
     }
   }
