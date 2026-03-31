@@ -8,6 +8,7 @@ router.get("/json", (_req, res) => {
   res.status(200).json(swaggerSpec);
 });
 
-router.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+router.use("/", swaggerUi.serve);
+router.get("/", swaggerUi.setup(swaggerSpec));
 
 export { router as docsRouter };
