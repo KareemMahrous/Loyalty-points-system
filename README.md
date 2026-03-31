@@ -42,6 +42,23 @@ Run the server:
 npm run dev
 ```
 
+## Vercel
+
+The app is ready for Vercel serverless deployment.
+
+- Entry point: `api/index.js`
+- Routing: `vercel.json`
+- Swagger: `/api-docs`
+
+Set these env vars on Vercel:
+
+```env
+DB_CLIENT=postgres
+DATABASE_URL=your_postgres_connection_string
+JWT_SECRET=your_secret
+OTP_EXPIRY_MINUTES=5
+```
+
 ## Swagger
 
 Open locally:
@@ -57,6 +74,8 @@ Open locally:
 - `POST /api/customer/sendOtp`
 - `POST /api/customer/authenticate`
 - `GET /api/customer/getProfile`
+- `GET /api/customer/getQRCode`
+- `PATCH /api/customer/cashback/:actcd`
 
 ## Customer creation
 
@@ -89,9 +108,10 @@ Example response:
 ```json
 {
   "success": true,
+  "message": "Customer created successfully.",
   "error": "",
   "data": {
-    "message": "User created successfully."
+    "message": "Customer created successfully."
   }
 }
 ```
@@ -114,6 +134,7 @@ Response:
 ```json
 {
   "success": true,
+  "message": "OTP sent successfully.",
   "error": "",
   "data": {
     "message": "OTP sent successfully.",
@@ -145,6 +166,7 @@ Response returns a JWT bearer token:
 ```json
 {
   "success": true,
+  "message": "Authentication successful.",
   "error": "",
   "data": {
     "message": "Authentication successful.",
@@ -173,6 +195,14 @@ Call:
 
 ```text
 GET /api/customer/getProfile
+```
+
+### 4. Get QR code
+
+Use the same bearer token and call:
+
+```text
+GET /api/customer/getQRCode
 ```
 
 ## Postman
