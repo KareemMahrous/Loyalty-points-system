@@ -7,6 +7,7 @@ create table if not exists users (
   dob date,
   gender varchar(20),
   country_code varchar(20) not null,
+  country_name varchar(120) not null,
   company varchar(180) default '',
   tier_id integer,
   tier_name varchar(120),

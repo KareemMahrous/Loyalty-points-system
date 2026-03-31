@@ -2,8 +2,8 @@ import { AuthenticationError } from "../../../shared/errors/authentication-error
 import { InvalidInputError } from "../../../shared/errors/invalid-input-error.js";
 
 export class AuthenticateCustomerUseCase {
-  constructor({ userRepository, otpRepository, tokenService }) {
-    this.userRepository = userRepository;
+  constructor({ customerRepository, otpRepository, tokenService }) {
+    this.customerRepository = customerRepository;
     this.otpRepository = otpRepository;
     this.tokenService = tokenService;
   }
@@ -45,7 +45,7 @@ export class AuthenticateCustomerUseCase {
       throw new AuthenticationError("OTP is invalid.");
     }
 
-    const customer = await this.userRepository.findByMobile(payload.mobile);
+    const customer = await this.customerRepository.findByMobile(payload.mobile);
 
     if (!customer) {
       throw new AuthenticationError("Customer not found.");

@@ -1,9 +1,11 @@
-import { User } from "../../../domain/entities/user.js";
+import { Customer } from "../../../domain/entities/customer.js";
+import { CUSTOMER_TIERS } from "../../../shared/constants/customer-tiers.js";
 import { InvalidInputError } from "../../../shared/errors/invalid-input-error.js";
 
 export class CreateCustomerUseCase {
   constructor(customerRepository) {
     this.customerRepository = customerRepository;
+    this.countryNames = new Intl.DisplayNames(["en"], { type: "region" });
   }
 
   async execute(payload) {
@@ -58,9 +60,18 @@ export class CreateCustomerUseCase {
       throw new InvalidInputError("mobile already exists");
     }
 
-    const actcd = await this.generateActcd(payload.countryCode);
+    const normalizedCountryCode = String(payload.countryCode)
+      .trim()
+      .toUpperCase();
+    const countryName = this.countryNames.of(normalizedCountryCode);
 
-    const customer = new User({
+    if (!countryName) {
+      throw new InvalidInputError("countryCode is invalid");
+    }
+
+    const actcd = await this.generateActcd(normalizedCountryCode);
+
+    const customer = new Customer({
       actcd,
       name: payload.name,
       cardname: payload.name.toUpperCase(),
@@ -68,13 +79,14 @@ export class CreateCustomerUseCase {
       email: payload.email ?? null,
       dob: null,
       gender: null,
-      countryCode: payload.countryCode,
-      company: "",
-      tier_id: 1,
-      tier_name: "Starter",
-      cashback_percent: 10,
-      range_from: 0,
-      range_to: 100,
+      countryCode: normalizedCountryCode,
+      countryName,
+      company: null,
+      tier_id: CUSTOMER_TIERS[0].tier_id,
+      tier_name: CUSTOMER_TIERS[0].tier_name,
+      cashback_percent: CUSTOMER_TIERS[0].cashback_percent,
+      range_from: CUSTOMER_TIERS[0].range_from,
+      range_to: CUSTOMER_TIERS[0].range_to,
       cashback_available: "0.000",
       cashback_total_earned: "0.000",
       cyearsale: "0.000",
@@ -86,10 +98,8 @@ export class CreateCustomerUseCase {
   }
 
   async generateActcd(countryCode) {
-    const normalizedCountryCode = String(countryCode).trim().toUpperCase();
-    const totalCustomers = await this.customerRepository.countByCountryCode(
-      normalizedCountryCode,
-    );
-    return `${normalizedCountryCode}${totalCustomers + 1}`;
+    const totalCustomers =
+      await this.customerRepository.countByCountryCode(countryCode);
+    return `${countryCode}${totalCustomers + 1}`;
   }
 }

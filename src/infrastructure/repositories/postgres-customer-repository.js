@@ -1,8 +1,8 @@
-import { UserRepository } from "../../domain/repositories/user-repository.js";
+import { CustomerRepository } from "../../domain/repositories/customer-repository.js";
 import { postgresPool } from "../db/postgres/pool.js";
 
-export class PostgresUserRepository extends UserRepository {
-  async create(user) {
+export class PostgresCustomerRepository extends CustomerRepository {
+  async create(customer) {
     const query = `
       insert into users (
         actcd,
@@ -13,6 +13,7 @@ export class PostgresUserRepository extends UserRepository {
         dob,
         gender,
         country_code,
+        country_name,
         company,
         tier_id,
         tier_name,
@@ -25,7 +26,7 @@ export class PostgresUserRepository extends UserRepository {
         total_sale,
         last_transaction_date
       )
-      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
       returning
         actcd,
         name,
@@ -35,6 +36,7 @@ export class PostgresUserRepository extends UserRepository {
         dob,
         gender,
         country_code,
+        country_name,
         company,
         tier_id,
         tier_name,
@@ -49,25 +51,26 @@ export class PostgresUserRepository extends UserRepository {
     `;
 
     const values = [
-      user.actcd,
-      user.name,
-      user.cardname,
-      user.mobile,
-      user.email,
-      user.dob,
-      user.gender,
-      user.countryCode,
-      user.company,
-      user.tier.tier_id,
-      user.tier.tier_name,
-      user.tier.cashback_percent,
-      user.tier.range_from,
-      user.tier.range_to,
-      user.cashback.available,
-      user.cashback.total_earned,
-      user.spending.cyearsale,
-      user.spending.total_sale,
-      user.last_transaction_date
+      customer.actcd,
+      customer.name,
+      customer.cardname,
+      customer.mobile,
+      customer.email,
+      customer.dob,
+      customer.gender,
+      customer.countryCode,
+      customer.countryName,
+      customer.company,
+      customer.tier.tier_id,
+      customer.tier.tier_name,
+      customer.tier.cashback_percent,
+      customer.tier.range_from,
+      customer.tier.range_to,
+      customer.cashback.available,
+      customer.cashback.total_earned,
+      customer.spending.cyearsale,
+      customer.spending.total_sale,
+      customer.last_transaction_date
     ];
     const result = await postgresPool.query(query, values);
 
@@ -85,6 +88,7 @@ export class PostgresUserRepository extends UserRepository {
         dob,
         gender,
         country_code,
+        country_name,
         company,
         tier_id,
         tier_name,
@@ -114,6 +118,7 @@ export class PostgresUserRepository extends UserRepository {
         dob,
         gender,
         country_code,
+        country_name,
         company,
         tier_id,
         tier_name,
@@ -156,6 +161,7 @@ export class PostgresUserRepository extends UserRepository {
         dob,
         gender,
         country_code,
+        country_name,
         company,
         tier_id,
         tier_name,
@@ -176,6 +182,54 @@ export class PostgresUserRepository extends UserRepository {
     return result.rows[0] ? this.mapRowToCustomer(result.rows[0]) : null;
   }
 
+  async updateCashbackAndTierByActcd(actcd, { available, total_earned, tier }) {
+    const result = await postgresPool.query(
+      `update users
+      set
+        cashback_available = $2,
+        cashback_total_earned = $3,
+        tier_id = $4,
+        tier_name = $5,
+        cashback_percent = $6,
+        range_from = $7,
+        range_to = $8
+      where actcd = $1
+      returning
+        actcd,
+        name,
+        cardname,
+        mobile,
+        email,
+        dob,
+        gender,
+        country_code,
+        country_name,
+        company,
+        tier_id,
+        tier_name,
+        cashback_percent,
+        range_from,
+        range_to,
+        cashback_available,
+        cashback_total_earned,
+        cyearsale,
+        total_sale,
+        last_transaction_date`,
+      [
+        actcd,
+        available,
+        total_earned,
+        tier.tier_id,
+        tier.tier_name,
+        tier.cashback_percent,
+        tier.range_from,
+        tier.range_to
+      ]
+    );
+
+    return result.rows[0] ? this.mapRowToCustomer(result.rows[0]) : null;
+  }
+
   mapRowToCustomer(row) {
     return {
       actcd: row.actcd,
@@ -186,6 +240,7 @@ export class PostgresUserRepository extends UserRepository {
       dob: row.dob,
       gender: row.gender,
       countryCode: row.country_code,
+      countryName: row.country_name,
       company: row.company,
       tier: {
         tier_id: row.tier_id,

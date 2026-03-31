@@ -1,6 +1,6 @@
-import { UserRepository } from "../../domain/repositories/user-repository.js";
+import { CustomerRepository } from "../../domain/repositories/customer-repository.js";
 
-export class InMemoryUserRepository extends UserRepository {
+export class InMemoryCustomerRepository extends CustomerRepository {
   constructor() {
     super();
     this.users = [];
@@ -25,5 +25,23 @@ export class InMemoryUserRepository extends UserRepository {
 
   async findByActcd(actcd) {
     return this.users.find((user) => user.actcd === actcd) || null;
+  }
+
+  async updateCashbackAndTierByActcd(actcd, { available, total_earned, tier }) {
+    const customer = await this.findByActcd(actcd);
+
+    if (!customer) {
+      return null;
+    }
+
+    customer.cashback = {
+      available,
+      total_earned
+    };
+    customer.tier = {
+      ...tier
+    };
+
+    return customer;
   }
 }

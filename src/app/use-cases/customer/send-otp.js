@@ -1,8 +1,8 @@
 import { InvalidInputError } from "../../../shared/errors/invalid-input-error.js";
 
 export class SendOtpUseCase {
-  constructor({ userRepository, otpRepository, otpProvider, otpExpiryMinutes }) {
-    this.userRepository = userRepository;
+  constructor({ customerRepository, otpRepository, otpProvider, otpExpiryMinutes }) {
+    this.customerRepository = customerRepository;
     this.otpRepository = otpRepository;
     this.otpProvider = otpProvider;
     this.otpExpiryMinutes = otpExpiryMinutes;
@@ -30,7 +30,7 @@ export class SendOtpUseCase {
       throw new InvalidInputError("mobile is invalid");
     }
 
-    const customer = await this.userRepository.findByMobile(payload.mobile);
+    const customer = await this.customerRepository.findByMobile(payload.mobile);
 
     if (!customer || customer.countryCode !== payload.countryCode) {
       throw new InvalidInputError("Customer not found for the provided mobile and countryCode");

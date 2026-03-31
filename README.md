@@ -56,7 +56,7 @@ Open locally:
 - `POST /api/customer/create`
 - `POST /api/customer/sendOtp`
 - `POST /api/customer/authenticate`
-- `GET /api/customer/profile`
+- `GET /api/customer/getProfile`
 
 ## Customer creation
 
@@ -172,7 +172,7 @@ Authorization: Bearer <token>
 Call:
 
 ```text
-GET /api/customer/profile
+GET /api/customer/getProfile
 ```
 
 ## Postman

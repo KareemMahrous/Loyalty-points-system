@@ -72,3 +72,26 @@ export async function customerProfileController(req, res) {
     );
   }
 }
+
+export async function customerQrCodeController(req, res) {
+  try {
+    const data = await container.getCustomerQrCodeUseCase.execute({
+      actcd: req.auth.actcd
+    });
+
+    return res.status(200).json(
+      successResponse({
+        message: "Customer QR code fetched successfully.",
+        data
+      })
+    );
+  } catch (error) {
+    const statusCode = error instanceof AuthenticationError ? 401 : 500;
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "Customer QR code fetch failed.",
+        error: error.message
+      })
+    );
+  }
+}

@@ -88,6 +88,22 @@
         },
         {
           "name": "Authenticate Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();",
+                  "const token = response?.data?.token;",
+                  "",
+                  "if (token) {",
+                  "  pm.collectionVariables.set('token', token);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -112,6 +128,96 @@
               ]
             },
             "description": "Authenticates a customer with the default OTP."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/getProfile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "getProfile"
+              ]
+            },
+            "description": "Returns the full authenticated customer profile using the bearer token from authenticate."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer QR Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/getQRCode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "getQRCode"
+              ]
+            },
+            "description": "Returns QR code data for the authenticated customer using the bearer token from authenticate."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer Cashback",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available\": \"145.000\",\n  \"total_earned\": \"195.000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/cashback/BH1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "cashback",
+                "BH1"
+              ]
+            },
+            "description": "Updates cashback totals and recalculates the customer tier based on total earned cashback."
           },
           "response": []
         }
@@ -146,6 +252,10 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
     }
   ]
 }

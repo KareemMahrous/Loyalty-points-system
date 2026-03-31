@@ -1,4 +1,4 @@
-export class User {
+export class Customer {
   constructor({
     actcd,
     name,
@@ -8,7 +8,8 @@ export class User {
     dob = null,
     gender = null,
     countryCode,
-    company = "",
+    countryName,
+    company = null,
     tier_id = null,
     tier_name = null,
     cashback_percent = null,
@@ -28,6 +29,7 @@ export class User {
     this.dob = dob;
     this.gender = gender;
     this.countryCode = countryCode;
+    this.countryName = countryName;
     this.company = company;
     this.tier = {
       tier_id,
