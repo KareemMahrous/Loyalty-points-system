@@ -87,6 +87,7 @@ export class PostgresCustomerRepository extends CustomerRepository {
         email,
         dob,
         gender,
+        country_code,
         country_name,
         company,
         tier_id,
@@ -116,6 +117,7 @@ export class PostgresCustomerRepository extends CustomerRepository {
         email,
         dob,
         gender,
+        country_code,
         country_name,
         company,
         tier_id,
@@ -158,6 +160,7 @@ export class PostgresCustomerRepository extends CustomerRepository {
         email,
         dob,
         gender,
+        country_code,
         country_name,
         company,
         tier_id,
@@ -199,6 +202,7 @@ export class PostgresCustomerRepository extends CustomerRepository {
         email,
         dob,
         gender,
+        country_code,
         country_name,
         company,
         tier_id,
@@ -226,6 +230,68 @@ export class PostgresCustomerRepository extends CustomerRepository {
     return result.rows[0] ? this.mapRowToCustomer(result.rows[0]) : null;
   }
 
+  async updateProfileByActcd(actcd, updates) {
+    const fields = [];
+    const values = [actcd];
+    let index = 2;
+
+    if (updates.name !== undefined) {
+      fields.push(`name = $${index}`);
+      values.push(updates.name);
+      index += 1;
+
+      fields.push(`cardname = $${index}`);
+      values.push(updates.cardname);
+      index += 1;
+    }
+
+    if (updates.email !== undefined) {
+      fields.push(`email = $${index}`);
+      values.push(updates.email);
+      index += 1;
+    }
+
+    if (updates.dob !== undefined) {
+      fields.push(`dob = $${index}`);
+      values.push(updates.dob);
+      index += 1;
+    }
+
+    if (fields.length === 0) {
+      return this.findByActcd(actcd);
+    }
+
+    const result = await postgresPool.query(
+      `update users
+      set ${fields.join(", ")}
+      where actcd = $1
+      returning
+        actcd,
+        name,
+        cardname,
+        mobile,
+        email,
+        dob,
+        gender,
+        country_code,
+        country_name,
+        company,
+        tier_id,
+        tier_name,
+        cashback_percent,
+        range_from,
+        range_to,
+        cashback_available,
+        cashback_total_earned,
+        cyearsale,
+        total_sale,
+        last_transaction_date`,
+      values
+    );
+
+    return result.rows[0] ? this.mapRowToCustomer(result.rows[0]) : null;
+  }
+
   mapRowToCustomer(row) {
     return {
       actcd: row.actcd,
@@ -235,7 +301,8 @@ export class PostgresCustomerRepository extends CustomerRepository {
       email: row.email,
       dob: row.dob,
       gender: row.gender,
-      countryName: row.country_name,
+      countryCode: row.country_code,
+      country: row.country_name,
       company: row.company,
       tier: {
         tier_id: row.tier_id,

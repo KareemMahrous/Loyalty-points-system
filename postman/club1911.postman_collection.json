@@ -3,7 +3,7 @@
     "_postman_id": "f2b2c9a0-5f20-4f7d-b9e7-2f6cbbd2fce1",
     "name": "club1911 API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the club1911 API starter."
+    "description": "Postman collection for the club1911 API starter. Create and OTP requests still use countryCode, while customer responses now return only country."
   },
   "item": [
     {
@@ -188,6 +188,45 @@
               ]
             },
             "description": "Returns QR code data for the authenticated customer using the bearer token from authenticate."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MAHMOUD NADE UPDATED\",\n  \"email\": \"updated@example.com\",\n  \"dob\": \"2000-12-12\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/updateProfile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "updateProfile"
+              ]
+            },
+            "description": "Updates the authenticated customer's name, email, and/or date of birth using the bearer token from authenticate."
           },
           "response": []
         },

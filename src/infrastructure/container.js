@@ -8,6 +8,7 @@ import { GetCustomerProfileUseCase } from "../app/use-cases/customer/get-custome
 import { GetCustomerQrCodeUseCase } from "../app/use-cases/customer/get-customer-qr-code.js";
 import { ListCustomersUseCase } from "../app/use-cases/customer/list-customers.js";
 import { SendOtpUseCase } from "../app/use-cases/customer/send-otp.js";
+import { UpdateCustomerProfileUseCase } from "../app/use-cases/customer/update-customer-profile.js";
 import { UpdateCustomerCashbackUseCase } from "../app/use-cases/customer/update-customer-cashback.js";
 import { DefaultOtpProvider } from "./services/default-otp-provider.js";
 import { JwtTokenService } from "./services/jwt-token-service.js";
@@ -30,6 +31,7 @@ export const container = {
   getCustomerProfileUseCase: new GetCustomerProfileUseCase(customerRepository),
   getCustomerQrCodeUseCase: new GetCustomerQrCodeUseCase(customerRepository),
   listCustomersUseCase: new ListCustomersUseCase(customerRepository),
+  updateCustomerProfileUseCase: new UpdateCustomerProfileUseCase(customerRepository),
   updateCustomerCashbackUseCase: new UpdateCustomerCashbackUseCase(customerRepository),
   sendOtpUseCase: new SendOtpUseCase({
     customerRepository,

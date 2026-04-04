@@ -5,6 +5,7 @@ import {
   customerProfileController,
   customerQrCodeController,
   sendOtpController,
+  updateCustomerProfileController,
 } from "../controllers/customer-controller.js";
 import {
   createCustomerController,
@@ -146,6 +147,38 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiErrorResponse'
+ * /api/customer/updateProfile:
+ *   patch:
+ *     summary: Update authenticated customer profile
+ *     tags:
+ *       - Customer
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateCustomerProfileRequest'
+ *     responses:
+ *       200:
+ *         description: Customer profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateCustomerProfileSuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiErrorResponse'
+ *       422:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiErrorResponse'
  * /api/customer/cashback/{actcd}:
  *   patch:
  *     summary: Update customer cashback and tier
@@ -185,5 +218,6 @@ router.post("/sendOtp", sendOtpController);
 router.post("/authenticate", authenticateCustomerController);
 router.get("/getProfile", authenticateBearer, customerProfileController);
 router.get("/getQRCode", authenticateBearer, customerQrCodeController);
+router.patch("/updateProfile", authenticateBearer, updateCustomerProfileController);
 
 export { router as customerRouter };

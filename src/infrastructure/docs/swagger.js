@@ -123,6 +123,77 @@ const options = {
           required: ["available", "total_earned"],
           additionalProperties: false,
         },
+        UpdateCustomerProfileRequest: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              example: "MAHMOUD NADE",
+            },
+            email: {
+              type: "string",
+              format: "email",
+              nullable: true,
+              example: "mm@example.com",
+            },
+            dob: {
+              type: "string",
+              nullable: true,
+              example: "2000-12-12",
+            },
+          },
+          additionalProperties: false,
+        },
+        CustomerProfileSummary: {
+          type: "object",
+          properties: {
+            actcd: {
+              type: "string",
+              example: "BH1",
+            },
+            name: {
+              type: "string",
+              example: "MAHMOUD NADE UPDATED",
+            },
+            cardname: {
+              type: "string",
+              example: "MAHMOUD NADE UPDATED",
+            },
+            mobile: {
+              type: "string",
+              example: "35467131",
+            },
+            email: {
+              type: "string",
+              nullable: true,
+              example: "updated@example.com",
+            },
+            dob: {
+              type: "string",
+              nullable: true,
+              example: "2000-12-12",
+            },
+            gender: {
+              type: "string",
+              nullable: true,
+              example: null,
+            },
+            country: {
+              type: "string",
+              example: "Bahrain",
+            },
+            company: {
+              type: "string",
+              nullable: true,
+              example: null,
+            },
+            last_transaction_date: {
+              type: "string",
+              nullable: true,
+              example: null,
+            },
+          },
+        },
         CustomerQrCodeData: {
           type: "object",
           properties: {
@@ -182,8 +253,7 @@ const options = {
             email: "mm@example.com",
             dob: null,
             gender: null,
-            countryCode: "BH",
-            countryName: "Bahrain",
+            country: "Bahrain",
             company: null,
             tier: {
               tier_id: 4,
@@ -214,8 +284,7 @@ const options = {
             },
             dob: { type: "string", nullable: true, example: null },
             gender: { type: "string", nullable: true, example: null },
-            countryCode: { type: "string", example: "BH" },
-            countryName: { type: "string", example: "Bahrain" },
+            country: { type: "string", example: "Bahrain" },
             company: { type: "string", nullable: true, example: null },
             tier: {
               type: "object",
@@ -305,8 +374,7 @@ const options = {
               email: "mm@example.com",
               dob: null,
               gender: null,
-              countryCode: "BH",
-              countryName: "Bahrain",
+              country: "Bahrain",
               company: null,
               tier: {
                 tier_id: 4,
@@ -358,8 +426,7 @@ const options = {
               email: "mm@example.com",
               dob: null,
               gender: null,
-              countryCode: "BH",
-              countryName: "Bahrain",
+              country: "Bahrain",
               company: null,
               tier: {
                 tier_id: 2,
@@ -380,6 +447,43 @@ const options = {
             },
             success: true,
             message: "Customer cashback updated successfully.",
+            error: "",
+          },
+        },
+        UpdateCustomerProfileSuccessResponse: {
+          type: "object",
+          properties: {
+            data: {
+              $ref: "#/components/schemas/CustomerProfileSummary",
+            },
+            success: {
+              type: "boolean",
+              example: true,
+            },
+            message: {
+              type: "string",
+              example: "Customer profile updated successfully.",
+            },
+            error: {
+              type: "string",
+              example: "",
+            },
+          },
+          example: {
+            data: {
+              actcd: "BH1",
+              name: "MAHMOUD NADE UPDATED",
+              cardname: "MAHMOUD NADE UPDATED",
+              mobile: "35467131",
+              email: "updated@example.com",
+              dob: "2000-12-12",
+              gender: null,
+              country: "Bahrain",
+              company: null,
+              last_transaction_date: null,
+            },
+            success: true,
+            message: "Customer profile updated successfully.",
             error: "",
           },
         },
@@ -490,8 +594,7 @@ const options = {
                 email: "mm@example.com",
                 dob: null,
                 gender: null,
-                countryCode: "BH",
-                countryName: "Bahrain",
+                country: "Bahrain",
                 company: null,
                 tier: {
                   tier_id: 4,

@@ -22,4 +22,8 @@ export class CustomerRepository {
   async updateCashbackAndTierByActcd() {
     throw new Error("CustomerRepository.updateCashbackAndTierByActcd must be implemented");
   }
+
+  async updateProfileByActcd() {
+    throw new Error("CustomerRepository.updateProfileByActcd must be implemented");
+  }
 }

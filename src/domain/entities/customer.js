@@ -29,7 +29,7 @@ export class Customer {
     this.dob = dob;
     this.gender = gender;
     this.countryCode = countryCode;
-    this.countryName = countryName;
+    this.country = countryName;
     this.company = company;
     this.tier = {
       tier_id,

@@ -3,6 +3,20 @@ import { AuthenticationError } from "../../../shared/errors/authentication-error
 import { InvalidInputError } from "../../../shared/errors/invalid-input-error.js";
 import { errorResponse, successResponse } from "../../../shared/http/response-model.js";
 
+function toCustomerProfileSummary(customer) {
+  return {
+    actcd: customer.actcd,
+    name: customer.name,
+    cardname: customer.cardname,
+    mobile: customer.mobile,
+    email: customer.email,
+    dob: customer.dob,
+    gender: customer.gender,
+    country: customer.country,
+    company: customer.company,
+  };
+}
+
 export async function sendOtpController(req, res) {
   try {
     const data = await container.sendOtpUseCase.execute(req.body);
@@ -90,6 +104,37 @@ export async function customerQrCodeController(req, res) {
     return res.status(statusCode).json(
       errorResponse({
         message: "Customer QR code fetch failed.",
+        error: error.message
+      })
+    );
+  }
+}
+
+export async function updateCustomerProfileController(req, res) {
+  try {
+    const customer = await container.updateCustomerProfileUseCase.execute({
+      actcd: req.auth.actcd,
+      payload: req.body
+    });
+
+    return res.status(200).json(
+      successResponse({
+        message: "Customer profile updated successfully.",
+        data: toCustomerProfileSummary(customer)
+      })
+    );
+  } catch (error) {
+    let statusCode = 500;
+
+    if (error instanceof InvalidInputError) {
+      statusCode = 422;
+    } else if (error instanceof AuthenticationError) {
+      statusCode = 401;
+    }
+
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "Customer profile update failed.",
         error: error.message
       })
     );

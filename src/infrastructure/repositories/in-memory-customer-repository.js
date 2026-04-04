@@ -44,4 +44,27 @@ export class InMemoryCustomerRepository extends CustomerRepository {
 
     return customer;
   }
+
+  async updateProfileByActcd(actcd, updates) {
+    const customer = await this.findByActcd(actcd);
+
+    if (!customer) {
+      return null;
+    }
+
+    if (updates.name !== undefined) {
+      customer.name = updates.name;
+      customer.cardname = updates.cardname;
+    }
+
+    if (updates.email !== undefined) {
+      customer.email = updates.email;
+    }
+
+    if (updates.dob !== undefined) {
+      customer.dob = updates.dob;
+    }
+
+    return customer;
+  }
 }
