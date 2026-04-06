@@ -58,80 +58,6 @@
           "response": []
         },
         {
-          "name": "Send OTP",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"mobile\": \"35467131\",\n  \"countryCode\": \"BH\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/customer/sendOtp",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "customer",
-                "sendOtp"
-              ]
-            },
-            "description": "Sends the default OTP for an existing customer."
-          },
-          "response": []
-        },
-        {
-          "name": "Authenticate Customer",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "const response = pm.response.json();",
-                  "const token = response?.data?.token;",
-                  "",
-                  "if (token) {",
-                  "  pm.collectionVariables.set('token', token);",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"mobile\": \"35467131\",\n  \"otp\": \"000000\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/customer/authenticate",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "customer",
-                "authenticate"
-              ]
-            },
-            "description": "Authenticates a customer with the default OTP."
-          },
-          "response": []
-        },
-        {
           "name": "Get Customer Profile",
           "request": {
             "method": "GET",
@@ -188,6 +114,36 @@
               ]
             },
             "description": "Returns QR code data for the authenticated customer using the bearer token from authenticate."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/transaction",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "transaction"
+              ]
+            },
+            "description": "Returns the authenticated customer's cashback summary and transaction list using the bearer token from authenticate."
           },
           "response": []
         },
@@ -263,6 +219,115 @@
       ]
     },
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"35467131\",\n  \"countryCode\": \"BH\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/sendOtp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "sendOtp"
+              ]
+            },
+            "description": "Sends the default OTP for an existing customer."
+          },
+          "response": []
+        },
+        {
+          "name": "Store OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/storeOtp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "storeOtp"
+              ]
+            },
+            "description": "Generates and stores a separate user-specific 4-digit OTP without affecting the existing sendOtp flow. Response includes otp and expire_in."
+          },
+          "response": []
+        },
+        {
+          "name": "Authenticate Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();",
+                  "const token = response?.data?.token;",
+                  "",
+                  "if (token) {",
+                  "  pm.collectionVariables.set('token', token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"35467131\",\n  \"otp\": \"000000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/authenticate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "authenticate"
+              ]
+            },
+            "description": "Authenticates a customer with the default OTP."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Health",
       "item": [
         {
@@ -281,6 +346,81 @@
               ]
             },
             "description": "Checks whether the API is up and responding."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Discount",
+      "item": [
+        {
+          "name": "Convert Discount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": \"25.000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/discount/convert",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "discount",
+                "convert"
+              ]
+            },
+            "description": "Converts cashback available into a unique discount code. If the authenticated customer has no email in profile, send email in the body."
+          },
+          "response": []
+        },
+        {
+          "name": "List Discount Codes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/discount",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "discount"
+              ]
+            },
+            "description": "Returns all discount codes for the authenticated customer."
           },
           "response": []
         }

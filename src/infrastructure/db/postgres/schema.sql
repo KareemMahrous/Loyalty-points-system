@@ -20,3 +20,26 @@ create table if not exists users (
   total_sale numeric(14, 3) default 0.000,
   last_transaction_date timestamp
 );
+
+create table if not exists discount_codes (
+  discount_id bigserial primary key,
+  discount_code varchar(80) not null unique,
+  customer_actcd varchar(50) not null references users(actcd) on delete cascade,
+  email varchar(180) not null,
+  value numeric(14, 3) not null,
+  amount numeric(14, 3) not null,
+  country varchar(20) not null,
+  created_at timestamp not null default now()
+);
+
+create table if not exists customer_transactions (
+  transaction_id bigserial primary key,
+  actcd varchar(50) not null references users(actcd) on delete cascade,
+  total numeric(14, 3) not null,
+  date date not null,
+  invoice varchar(4) not null unique,
+  cash_back numeric(14, 3) not null,
+  tier_id integer,
+  p_date date not null,
+  created_at timestamp not null default now()
+);

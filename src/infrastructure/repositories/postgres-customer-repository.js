@@ -59,7 +59,7 @@ export class PostgresCustomerRepository extends CustomerRepository {
       customer.dob,
       customer.gender,
       customer.countryCode,
-      customer.countryName,
+      customer.country,
       customer.company,
       customer.tier.tier_id,
       customer.tier.tier_name,
@@ -290,6 +290,206 @@ export class PostgresCustomerRepository extends CustomerRepository {
     );
 
     return result.rows[0] ? this.mapRowToCustomer(result.rows[0]) : null;
+  }
+
+  async discountCodeExists(code) {
+    const result = await postgresPool.query(
+      `select 1
+      from discount_codes
+      where discount_code = $1
+      limit 1`,
+      [code]
+    );
+
+    return result.rowCount > 0;
+  }
+
+  async convertCashbackToDiscountByActcd(actcd, { email, value, discountCode }) {
+    const client = await postgresPool.connect();
+
+    try {
+      await client.query("begin");
+
+      const customerResult = await client.query(
+        `select cashback_available, tier_id, country_code
+        from users
+        where actcd = $1
+        for update`,
+        [actcd]
+      );
+
+      if (customerResult.rowCount === 0) {
+        await client.query("rollback");
+        return null;
+      }
+
+      const currentAvailable = Number(customerResult.rows[0].cashback_available);
+      const tierId = customerResult.rows[0].tier_id;
+      const countryCode = customerResult.rows[0].country_code;
+
+      if (Number.isNaN(currentAvailable) || value > currentAvailable) {
+        await client.query("rollback");
+        return null;
+      }
+
+      const invoice = await this.generateUniqueInvoice(client);
+      const amount = this.calculateDiscountAmount(value, countryCode);
+
+      await client.query(
+        `update users
+        set cashback_available = $2
+        where actcd = $1`,
+        [actcd, (currentAvailable - value).toFixed(3)]
+      );
+
+      await client.query(
+        `insert into discount_codes (
+          discount_code,
+          customer_actcd,
+          email,
+          value,
+          amount,
+          country
+        )
+        values ($1, $2, $3, $4, $5, $6)`,
+        [discountCode, actcd, email, value.toFixed(3), amount.toFixed(3), countryCode]
+      );
+
+      await client.query(
+        `insert into customer_transactions (
+          actcd,
+          total,
+          date,
+          invoice,
+          cash_back,
+          tier_id,
+          p_date
+        )
+        values ($1, $2, current_date, $3, $4, $5, current_date)`,
+        [actcd, (-value).toFixed(3), invoice, (-value).toFixed(3), tierId]
+      );
+
+      await client.query("commit");
+
+      return {
+        discount_code: discountCode
+      };
+    } catch (error) {
+      await client.query("rollback");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async findTransactionsByActcd(actcd) {
+    const result = await postgresPool.query(
+      `select
+        transaction_id,
+        actcd,
+        total,
+        date,
+        invoice,
+        cash_back,
+        tier_id,
+        p_date
+      from customer_transactions
+      where actcd = $1
+      order by transaction_id desc`,
+      [actcd]
+    );
+
+    return result.rows.map((row) => ({
+      transaction_id: row.transaction_id,
+      actcd: row.actcd,
+      total: row.total,
+      date: row.date,
+      invoice: row.invoice,
+      cash_back: row.cash_back,
+      tier_id: row.tier_id,
+      p_date: row.p_date
+    }));
+  }
+
+  async invoiceExists(invoice) {
+    const result = await postgresPool.query(
+      `select 1
+      from customer_transactions
+      where invoice = $1
+      limit 1`,
+      [invoice]
+    );
+
+    return result.rowCount > 0;
+  }
+
+  async generateUniqueInvoice(client = postgresPool) {
+    let invoice = "";
+    let exists = true;
+
+    while (exists) {
+      invoice = String(Math.floor(1000 + Math.random() * 9000));
+      const result = await client.query(
+        `select 1
+        from customer_transactions
+        where invoice = $1
+        limit 1`,
+        [invoice]
+      );
+      exists = result.rowCount > 0;
+    }
+
+    return invoice;
+  }
+
+  async findDiscountCodesByActcd(actcd) {
+    const result = await postgresPool.query(
+      `select
+        discount_id,
+        customer_actcd,
+        discount_code,
+        amount,
+        country,
+        created_at
+      from discount_codes
+      where customer_actcd = $1
+      order by discount_id desc`,
+      [actcd]
+    );
+
+    return result.rows.map((row) => ({
+      discount_id: String(row.discount_id),
+      actcd: row.customer_actcd,
+      discount_code: row.discount_code,
+      amount: String(row.amount),
+      country: row.country,
+      date: row.created_at.toISOString().replace("T", " ").slice(0, 19)
+    }));
+  }
+
+  calculateDiscountAmount(value, countryCode) {
+    const multiplier = this.getCountryMultiplier(countryCode);
+    return value * multiplier;
+  }
+
+  getCountryMultiplier(countryCode) {
+    if (["BH", "OM", "JO"].includes(countryCode)) {
+      return 1;
+    }
+
+    if (countryCode === "KW") {
+      return 0.8;
+    }
+
+    if (["AE", "SA", "QA"].includes(countryCode)) {
+      return 10;
+    }
+
+    if (countryCode === "EG") {
+      return 50;
+    }
+
+    return 5;
   }
 
   mapRowToCustomer(row) {

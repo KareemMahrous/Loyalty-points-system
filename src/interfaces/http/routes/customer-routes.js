@@ -1,10 +1,9 @@
 import { Router } from "express";
 import { authenticateBearer } from "../middleware/authenticate-bearer.js";
 import {
-  authenticateCustomerController,
   customerProfileController,
   customerQrCodeController,
-  sendOtpController,
+  customerTransactionsController,
   updateCustomerProfileController,
 } from "../controllers/customer-controller.js";
 import {
@@ -53,60 +52,6 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiErrorResponse'
- * /api/customer/sendOtp:
- *   post:
- *     summary: Send customer OTP
- *     tags:
- *       - Customer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/SendOtpRequest'
- *     responses:
- *       200:
- *         description: OTP sent successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SendOtpSuccessResponse'
- *       422:
- *         description: Invalid input
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ApiErrorResponse'
- * /api/customer/authenticate:
- *   post:
- *     summary: Authenticate customer with OTP
- *     tags:
- *       - Customer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/AuthenticateCustomerRequest'
- *     responses:
- *       200:
- *         description: Authentication successful
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthenticateCustomerSuccessResponse'
- *       401:
- *         description: Authentication failed
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ApiErrorResponse'
- *       422:
- *         description: Invalid input
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ApiErrorResponse'
  * /api/customer/getProfile:
  *   get:
  *     summary: Get authenticated customer profile
@@ -141,6 +86,26 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/CustomerQrCodeSuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiErrorResponse'
+ * /api/customer/transaction:
+ *   get:
+ *     summary: Get authenticated customer transactions
+ *     tags:
+ *       - Customer
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Customer transactions returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CustomerTransactionsSuccessResponse'
  *       401:
  *         description: Unauthorized
  *         content:
@@ -214,10 +179,9 @@ const router = Router();
 router.get("/", listCustomersController);
 router.post("/create", createCustomerController);
 router.patch("/cashback/:actcd", updateCustomerCashbackController);
-router.post("/sendOtp", sendOtpController);
-router.post("/authenticate", authenticateCustomerController);
 router.get("/getProfile", authenticateBearer, customerProfileController);
 router.get("/getQRCode", authenticateBearer, customerQrCodeController);
+router.get("/transaction", authenticateBearer, customerTransactionsController);
 router.patch("/updateProfile", authenticateBearer, updateCustomerProfileController);
 
 export { router as customerRouter };

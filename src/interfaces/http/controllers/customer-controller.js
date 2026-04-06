@@ -37,6 +37,29 @@ export async function sendOtpController(req, res) {
   }
 }
 
+export async function storeOtpController(req, res) {
+  try {
+    const data = await container.storeOtpUseCase.execute({
+      actcd: req.auth.actcd
+    });
+
+    return res.status(200).json(
+      successResponse({
+        message: "OTP stored successfully.",
+        data
+      })
+    );
+  } catch (error) {
+    const statusCode = error instanceof AuthenticationError ? 401 : 500;
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "OTP store failed.",
+        error: error.message
+      })
+    );
+  }
+}
+
 export async function authenticateCustomerController(req, res) {
   try {
     const data = await container.authenticateCustomerUseCase.execute(req.body);
@@ -104,6 +127,29 @@ export async function customerQrCodeController(req, res) {
     return res.status(statusCode).json(
       errorResponse({
         message: "Customer QR code fetch failed.",
+        error: error.message
+      })
+    );
+  }
+}
+
+export async function customerTransactionsController(req, res) {
+  try {
+    const data = await container.getCustomerTransactionsUseCase.execute({
+      actcd: req.auth.actcd
+    });
+
+    return res.status(200).json(
+      successResponse({
+        message: "Customer transactions fetched successfully.",
+        data
+      })
+    );
+  } catch (error) {
+    const statusCode = error instanceof AuthenticationError ? 401 : 500;
+    return res.status(statusCode).json(
+      errorResponse({
+        message: "Customer transactions fetch failed.",
         error: error.message
       })
     );

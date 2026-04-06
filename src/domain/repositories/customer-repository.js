@@ -26,4 +26,24 @@ export class CustomerRepository {
   async updateProfileByActcd() {
     throw new Error("CustomerRepository.updateProfileByActcd must be implemented");
   }
+
+  async discountCodeExists() {
+    throw new Error("CustomerRepository.discountCodeExists must be implemented");
+  }
+
+  async convertCashbackToDiscountByActcd() {
+    throw new Error("CustomerRepository.convertCashbackToDiscountByActcd must be implemented");
+  }
+
+  async findTransactionsByActcd() {
+    throw new Error("CustomerRepository.findTransactionsByActcd must be implemented");
+  }
+
+  async invoiceExists() {
+    throw new Error("CustomerRepository.invoiceExists must be implemented");
+  }
+
+  async findDiscountCodesByActcd() {
+    throw new Error("CustomerRepository.findDiscountCodesByActcd must be implemented");
+  }
 }

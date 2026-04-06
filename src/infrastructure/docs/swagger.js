@@ -1,24 +1,39 @@
-import swaggerJSDoc from "swagger-jsdoc";
-
 const defaultServerUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-const options = {
-  definition: {
-    openapi: "3.0.3",
-    info: {
-      title: "club1911 API",
-      version: "1.0.0",
-      description: "Local API documentation for the club1911 backend.",
+export const swaggerSpec = {
+  openapi: "3.0.3",
+  info: {
+    title: "club1911 API",
+    version: "1.0.0",
+    description: "Local API documentation for the club1911 backend.",
+  },
+  tags: [
+    {
+      name: "Auth",
+      description: "OTP and authentication endpoints",
     },
-    servers: [
-      {
-        url: defaultServerUrl,
-        description: process.env.VERCEL_URL ? "Vercel deployment" : "Local development server",
-      },
-    ],
-    components: {
+    {
+      name: "Customer",
+      description: "Customer profile and customer data endpoints",
+    },
+    {
+      name: "Discount",
+      description: "Discount conversion and discount code endpoints",
+    },
+    {
+      name: "Health",
+      description: "Health check endpoints",
+    },
+  ],
+  servers: [
+    {
+      url: defaultServerUrl,
+      description: process.env.VERCEL_URL ? "Vercel deployment" : "Local development server",
+    },
+  ],
+  components: {
       securitySchemes: {
         bearerAuth: {
           type: "http",
@@ -143,6 +158,129 @@ const options = {
             },
           },
           additionalProperties: false,
+        },
+        ConvertDiscountRequest: {
+          type: "object",
+          properties: {
+            email: {
+              type: "string",
+              format: "email",
+              nullable: true,
+              example: "mm@example.com",
+            },
+            value: {
+              type: "string",
+              example: "25.000",
+            },
+          },
+          required: ["value"],
+          additionalProperties: false,
+        },
+        ConvertDiscountResponseData: {
+          type: "object",
+          properties: {
+            discount_code: {
+              type: "string",
+              example: "BH1-A1B2C3",
+            },
+          },
+        },
+        DiscountCodeItem: {
+          type: "object",
+          properties: {
+            discount_id: {
+              type: "string",
+              example: "18",
+            },
+            actcd: {
+              type: "string",
+              example: "BH4",
+            },
+            discount_code: {
+              type: "string",
+              example: "BH4-321893",
+            },
+            amount: {
+              type: "string",
+              example: "50.000",
+            },
+            country: {
+              type: "string",
+              example: "BH",
+            },
+            date: {
+              type: "string",
+              example: "2026-01-01 12:08:24",
+            },
+          },
+        },
+        CustomerTransactionItem: {
+          type: "object",
+          properties: {
+            transaction_id: {
+              type: "integer",
+              example: 84,
+            },
+            actcd: {
+              type: "string",
+              example: "BH1",
+            },
+            total: {
+              type: "string",
+              example: "-25.000",
+            },
+            date: {
+              type: "string",
+              example: "2025-12-01",
+            },
+            invoice: {
+              type: "string",
+              example: "1000",
+            },
+            cash_back: {
+              type: "string",
+              example: "-25.000",
+            },
+            tier_id: {
+              type: "integer",
+              example: 1,
+            },
+            p_date: {
+              type: "string",
+              example: "2025-11-26",
+            },
+          },
+        },
+        CustomerTransactionsData: {
+          type: "object",
+          properties: {
+            actcd: {
+              type: "string",
+              example: "BH1",
+            },
+            customer_name: {
+              type: "string",
+              example: "MAHMOUD NADE",
+            },
+            total_cashback: {
+              type: "string",
+              example: "195.000",
+            },
+            points: {
+              type: "string",
+              example: "145.000",
+            },
+            transaction_count: {
+              type: "integer",
+              example: 4,
+            },
+            transactions: {
+              type: "array",
+              items: {
+                $ref: "#/components/schemas/CustomerTransactionItem",
+              },
+            },
+          },
         },
         CustomerProfileSummary: {
           type: "object",
@@ -337,13 +475,13 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Health check completed successfully.",
+            error: "",
             data: {
               status: "ok",
               message: "API is running",
             },
-            success: true,
-            message: "Health check completed successfully.",
-            error: "",
           },
         },
         CustomerSuccessResponse: {
@@ -366,6 +504,9 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Customer fetched successfully.",
+            error: "",
             data: {
               actcd: "BH1",
               name: "MAHMOUD NADE",
@@ -393,9 +534,6 @@ const options = {
               },
               last_transaction_date: "2025-11-20 00:00:00",
             },
-            success: true,
-            message: "Customer fetched successfully.",
-            error: "",
           },
         },
         CustomerCashbackSuccessResponse: {
@@ -418,6 +556,9 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Customer cashback updated successfully.",
+            error: "",
             data: {
               actcd: "BH1",
               name: "MAHMOUD NADE",
@@ -445,9 +586,6 @@ const options = {
               },
               last_transaction_date: null,
             },
-            success: true,
-            message: "Customer cashback updated successfully.",
-            error: "",
           },
         },
         UpdateCustomerProfileSuccessResponse: {
@@ -470,6 +608,9 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Customer profile updated successfully.",
+            error: "",
             data: {
               actcd: "BH1",
               name: "MAHMOUD NADE UPDATED",
@@ -482,9 +623,72 @@ const options = {
               company: null,
               last_transaction_date: null,
             },
+          },
+        },
+        ConvertDiscountSuccessResponse: {
+          type: "object",
+          properties: {
+            data: {
+              $ref: "#/components/schemas/ConvertDiscountResponseData",
+            },
+            success: {
+              type: "boolean",
+              example: true,
+            },
+            message: {
+              type: "string",
+              example: "Discount code created successfully.",
+            },
+            error: {
+              type: "string",
+              example: "",
+            },
+          },
+          example: {
             success: true,
-            message: "Customer profile updated successfully.",
+            message: "Discount code created successfully.",
             error: "",
+            data: {
+              discount_code: "BH1-A1B2C3",
+            },
+          },
+        },
+        ListDiscountCodesSuccessResponse: {
+          type: "object",
+          properties: {
+            data: {
+              type: "array",
+              items: {
+                $ref: "#/components/schemas/DiscountCodeItem",
+              },
+            },
+            success: {
+              type: "boolean",
+              example: true,
+            },
+            message: {
+              type: "string",
+              example: "Discount codes fetched successfully.",
+            },
+            error: {
+              type: "string",
+              example: "",
+            },
+          },
+          example: {
+            success: true,
+            message: "Discount codes fetched successfully.",
+            error: "",
+            data: [
+              {
+                discount_id: "18",
+                actcd: "BH4",
+                discount_code: "BH4-321893",
+                amount: "50.000",
+                country: "BH",
+                date: "2026-01-01 12:08:24",
+              },
+            ],
           },
         },
         CustomerQrCodeSuccessResponse: {
@@ -507,6 +711,9 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Customer QR code fetched successfully.",
+            error: "",
             data: {
               actcd: "BH1",
               customer_name: "MAHMOUD NADE",
@@ -520,9 +727,50 @@ const options = {
               qr_code_data: "BH1",
               qr_code_url: "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=BH1",
             },
+          },
+        },
+        CustomerTransactionsSuccessResponse: {
+          type: "object",
+          properties: {
+            data: {
+              $ref: "#/components/schemas/CustomerTransactionsData",
+            },
+            success: {
+              type: "boolean",
+              example: true,
+            },
+            message: {
+              type: "string",
+              example: "Customer transactions fetched successfully.",
+            },
+            error: {
+              type: "string",
+              example: "",
+            },
+          },
+          example: {
             success: true,
-            message: "Customer QR code fetched successfully.",
+            message: "Customer transactions fetched successfully.",
             error: "",
+            data: {
+              actcd: "BH1",
+              customer_name: "MAHMOUD NADE",
+              total_cashback: "195.000",
+              points: "145.000",
+              transaction_count: 1,
+              transactions: [
+                {
+                  transaction_id: 84,
+                  actcd: "BH1",
+                  total: "-25.000",
+                  date: "2025-12-01",
+                  invoice: "1000",
+                  cash_back: "-25.000",
+                  tier_id: 1,
+                  p_date: "2025-11-26",
+                },
+              ],
+            },
           },
         },
         CreateCustomerResponseData: {
@@ -554,12 +802,12 @@ const options = {
             },
           },
           example: {
-            data: {
-              message: "Customer created successfully.",
-            },
             success: true,
             message: "Customer created successfully.",
             error: "",
+            data: {
+              message: "Customer created successfully.",
+            },
           },
         },
         CustomerListSuccessResponse: {
@@ -585,6 +833,9 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Customers fetched successfully.",
+            error: "",
             data: [
               {
                 actcd: "BH1",
@@ -614,9 +865,6 @@ const options = {
                 last_transaction_date: "2025-11-20 00:00:00",
               },
             ],
-            success: true,
-            message: "Customers fetched successfully.",
-            error: "",
           },
         },
         SendOtpRequest: {
@@ -671,14 +919,56 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "OTP sent successfully.",
+            error: "",
             data: {
               message: "OTP sent successfully.",
               otp_expiry_minutes: 5,
               mobile: "35467131",
             },
+          },
+        },
+        StoreOtpResponseData: {
+          type: "object",
+          properties: {
+            otp: {
+              type: "string",
+              example: "4821",
+            },
+            expire_in: {
+              type: "integer",
+              example: 60,
+            },
+          },
+        },
+        StoreOtpSuccessResponse: {
+          type: "object",
+          properties: {
+            data: {
+              $ref: "#/components/schemas/StoreOtpResponseData",
+            },
+            success: {
+              type: "boolean",
+              example: true,
+            },
+            message: {
+              type: "string",
+              example: "OTP stored successfully.",
+            },
+            error: {
+              type: "string",
+              example: "",
+            },
+          },
+          example: {
             success: true,
-            message: "OTP sent successfully.",
+            message: "OTP stored successfully.",
             error: "",
+            data: {
+              otp: "4821",
+              expire_in: 60,
+            },
           },
         },
         AuthenticateCustomerRequest: {
@@ -753,6 +1043,9 @@ const options = {
             },
           },
           example: {
+            success: true,
+            message: "Authentication successful.",
+            error: "",
             data: {
               message: "Authentication successful.",
               token: "jwt-token",
@@ -765,15 +1058,466 @@ const options = {
                 email: "mm@example.com",
               },
             },
-            success: true,
-            message: "Authentication successful.",
-            error: "",
+          },
+        },
+      },
+  },
+  paths: {
+    "/api/health": {
+      get: {
+        summary: "Check API health",
+        tags: ["Health"],
+        responses: {
+          200: {
+            description: "API is running",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/HealthSuccessResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer": {
+      get: {
+        summary: "List customers",
+        tags: ["Customer"],
+        responses: {
+          200: {
+            description: "Customers returned successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CustomerListSuccessResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/create": {
+      post: {
+        summary: "Create customer",
+        tags: ["Customer"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/CreateCustomerRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: "Customer created successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CreateCustomerSuccessResponse",
+                },
+              },
+            },
+          },
+          422: {
+            description: "Invalid input",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/sendOtp": {
+      post: {
+        summary: "Send customer OTP",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/SendOtpRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "OTP sent successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/SendOtpSuccessResponse",
+                },
+              },
+            },
+          },
+          422: {
+            description: "Invalid input",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/storeOtp": {
+      post: {
+        summary: "Generate and store customer-specific OTP",
+        tags: ["Auth"],
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        responses: {
+          200: {
+            description: "OTP stored successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/StoreOtpSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Authentication failed",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/authenticate": {
+      post: {
+        summary: "Authenticate customer with OTP",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/AuthenticateCustomerRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Authentication successful",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/AuthenticateCustomerSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Authentication failed",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+          422: {
+            description: "Invalid input",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/getProfile": {
+      get: {
+        summary: "Get authenticated customer profile",
+        tags: ["Customer"],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: "Customer profile returned successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CustomerSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/getQRCode": {
+      get: {
+        summary: "Get authenticated customer QR code data",
+        tags: ["Customer"],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: "Customer QR code data returned successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CustomerQrCodeSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/transaction": {
+      get: {
+        summary: "Get authenticated customer transactions",
+        tags: ["Customer"],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: "Customer transactions returned successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CustomerTransactionsSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/updateProfile": {
+      patch: {
+        summary: "Update authenticated customer profile",
+        tags: ["Customer"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/UpdateCustomerProfileRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Customer profile updated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/UpdateCustomerProfileSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+          422: {
+            description: "Invalid input",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/cashback/{actcd}": {
+      patch: {
+        summary: "Update customer cashback and tier",
+        tags: ["Customer"],
+        parameters: [
+          {
+            in: "path",
+            name: "actcd",
+            required: true,
+            schema: {
+              type: "string",
+            },
+            example: "BH1",
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/UpdateCustomerCashbackRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Customer cashback updated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CustomerCashbackSuccessResponse",
+                },
+              },
+            },
+          },
+          422: {
+            description: "Invalid input",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/discount/convert": {
+      post: {
+        summary: "Convert cashback available into a discount code",
+        tags: ["Discount"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ConvertDiscountRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Discount code created successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ConvertDiscountSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+          422: {
+            description: "Invalid input",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/customer/discount": {
+      get: {
+        summary: "List authenticated customer discount codes",
+        tags: ["Discount"],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: "Discount codes returned successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ListDiscountCodesSuccessResponse",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Unauthorized",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ApiErrorResponse",
+                },
+              },
+            },
           },
         },
       },
     },
   },
-  apis: ["./src/interfaces/http/routes/*.js"],
 };
-
-export const swaggerSpec = swaggerJSDoc(options);
