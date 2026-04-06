@@ -31,7 +31,7 @@ export class UpdateCustomerProfileUseCase {
       }
 
       updates.name = payload.name.trim();
-      updates.cardname = payload.name.trim();
+      updates.cardname = payload.name.trim().toUpperCase();
     }
 
     if (payload.email !== undefined) {
