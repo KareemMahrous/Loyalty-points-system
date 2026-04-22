@@ -1,6 +1,3 @@
-const defaultServerUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
 
 export const swaggerSpec = {
   openapi: "3.0.3",
@@ -29,8 +26,8 @@ export const swaggerSpec = {
   ],
   servers: [
     {
-      url: defaultServerUrl,
-      description: process.env.VERCEL_URL ? "Vercel deployment" : "Local development server",
+      url: "/",
+      description: "Default Server",
     },
   ],
   components: {
